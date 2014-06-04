@@ -7,6 +7,7 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 const int buttonOnePin = 9; // Boton Arriba
 const int buttonTwoPin = 8; // Boton Abajo
 const int buttonThreePin = 7; // Boton Enter
+const int buttonFourPin = 15; // Boton Comida
 const int motorA = 6; // Motor a pasos A
 const int motorB = 10; // Motor a pasos B
 const int motorC = 13; // Motor a pasos C
@@ -15,18 +16,22 @@ const int motorD = 14; // Motor a pasos D
 int buttonOneState;
 int buttonTwoState;
 int buttonThreeState;
+int buttonFourState;
 int lastButtonOneState = LOW;
 int lastButtonTwoState = LOW;
 int lastButtonThreeState = LOW;
+int lastButtonFourState = LOW;
 // Variables indicadoras
 int ledStateOne = HIGH;
 int ledStateTwo = HIGH;
 int ledStateThree = HIGH;
+int ledStateFour = HIGH;
 // Variables para el rebote de botones
 long lastDebounceTimeOne = 0;
 long lastDebounceTimeTwo = 0;
 long lastDebounceTimeThree = 0;
-long debounceDelay = 50;
+long lastDebounceTimeFour = 0;
+long debounceDelay = 100;
 // Variables para el Modulo RTC
 uint16_t startAddr = 0x0000;
 uint16_t lastAddr;
@@ -39,7 +44,7 @@ int horita=0, minutito=0;
 int r1=0, r2=0, r3=0, r4=0;
 int h1=0, h2=0, m1=0, m2=0;
 int counter=2, opcionc=1, horitas;
-int flag1=0, flag2=0, flag3=0, flag4=0, flag5=0, flag6=0, flag7=0, flag8=0, flag9;
+int flag1=0, flag2=0, flag3=0, flag4=0, flag5=0, flag6=0, flag7=0, flag8=0, flag9=0, flag10=0;
 void setup() {
   
   // Setup del Motor
@@ -75,6 +80,7 @@ void setup() {
   int readingOne = digitalRead(buttonOnePin);
   int readingTwo = digitalRead(buttonTwoPin);
   int readingThree = digitalRead(buttonThreePin);
+  int readingFour = digitalRead(buttonFourPin);
   
   if (readingOne != lastButtonOneState) {
     lastDebounceTimeOne = millis();}         
@@ -99,9 +105,15 @@ void setup() {
       buttonThreeState = readingThree;
       if (buttonThreeState == HIGH) {
         ledStateThree = !ledStateThree;}}}
+  if ((millis() - lastDebounceTimeFour) > debounceDelay) {
+    if (readingFour != buttonFourState) {
+      buttonFourState = readingFour;
+      if (buttonFourState == HIGH) {
+        ledStateFour = !ledStateFour;}}}
   lastButtonOneState = readingOne;
   lastButtonTwoState = readingTwo;
   lastButtonThreeState = readingThree;
+  lastButtonFourState = readingFour;
   
   // Setup del modo de los pines
   pinMode (7,INPUT);
@@ -115,6 +127,34 @@ void loop() {
 int readingOne = digitalRead(buttonOnePin);
 int readingTwo = digitalRead(buttonTwoPin);
 int readingThree = digitalRead(buttonThreePin);
+int readingFour = digitalRead(buttonFourPin);
+    // Boton: Comida
+     if (readingFour != lastButtonFourState) {
+          lastDebounceTimeFour = millis();}
+       if ((millis() - lastDebounceTimeFour) > debounceDelay) {
+             if (readingFour != buttonFourState) {
+                       buttonFourState = readingFour;
+                       if (buttonFourState == HIGH) {
+                         if (flag1==1){
+                           for (int vueltas=0; vueltas<12; vueltas++){
+                             lcd.clear();
+                             lcd.print("TOMA COMIDA");
+                             digitalWrite(motorA,HIGH);
+                             digitalWrite(motorB,HIGH);
+                             delay(100);
+                             digitalWrite(motorA,LOW);
+                             digitalWrite(motorC,HIGH);
+                             delay(100);
+                             digitalWrite(motorB,LOW);
+                             digitalWrite(motorD,HIGH);
+                             delay(100);
+                             digitalWrite(motorC,LOW);
+                             digitalWrite(motorA,HIGH);
+                             delay(100);
+                             digitalWrite(motorD,LOW);
+                             digitalWrite(motorA,LOW);}                  
+                           }}}}
+     lastButtonFourState = readingFour;
 if (flag8==0){
   
       // Boton: Arriba
@@ -167,7 +207,6 @@ if (flag8==0){
                              flag9=1;}}}}}
      lastButtonOneState = readingOne;
    
-       
        // Boton: Abajo
        if (readingTwo != lastButtonTwoState) {
           lastDebounceTimeTwo = millis();}
@@ -212,9 +251,9 @@ if (flag8==0){
                               lcd.print(":");
                               lcd.print(r3);
                               lcd.print(r4);}
-                           delay(100);}
+                           delay(100);
                            if (flag9==0){
-                             flag9=1;}}}}
+                             flag9=1;}}}}}
      lastButtonTwoState = readingTwo;
       
        // BOTON: ENTER/GUARDAR
@@ -234,7 +273,7 @@ if (flag8==0){
                                minutito=(r3*10)+r4;
                                if (TimeIsSet != 0xaa55){
                                  RTC.stopClock();
-                                 RTC.fillByYMD(2014,06,06;
+                                 RTC.fillByYMD(2014,06,06);
                                  RTC.fillByHMS(horita,minutito,00);
                                  RTC.setTime();
                                  TimeIsSet = 0xaa55;
@@ -658,7 +697,7 @@ if (flag6==1){
      lcd.print(RTC.second, DEC);}
    else{
      lcd.print(RTC.second, DEC);}
-   lcd.setCursor(3,2);
+   lcd.setCursor(1,2);
    if (RTC.day < 10){
      lcd.print("0");
      lcd.print(RTC.day, DEC);}
