@@ -9,7 +9,7 @@ const int buttonTwoPin = 8; // Boton Abajo
 const int buttonThreePin = 7; // Boton Enter
 const int buttonFourPin = 15; // Boton Comida
 const int motorA = 6; // Motor a pasos A
-const int motorB = 10; // Motor a pasos B
+const int motorB = 16; // Motor a pasos B
 const int motorC = 13; // Motor a pasos C
 const int motorD = 14; // Motor a pasos D
 // Variables para los botones
@@ -121,6 +121,23 @@ void setup() {
   pinMode (9,INPUT);
   
 }
+void rotate(){
+  for (int vueltas=0; vueltas<12; vueltas++){
+    digitalWrite(motorD,HIGH);
+    digitalWrite(motorC,HIGH);
+    delay(100);
+    digitalWrite(motorD,LOW);
+    digitalWrite(motorB,HIGH);
+    delay(100);
+    digitalWrite(motorC,LOW);    
+    digitalWrite(motorA,HIGH);
+    delay(100);
+    digitalWrite(motorB,LOW);
+    digitalWrite(motorD,HIGH);
+    delay(100);
+    digitalWrite(motorD,LOW);
+    digitalWrite(motorA,LOW);}
+}
 void loop() {
   
 // Lectura de los botones
@@ -136,23 +153,7 @@ int readingFour = digitalRead(buttonFourPin);
                        buttonFourState = readingFour;
                        if (buttonFourState == HIGH) {
                          if (flag1==1){
-                           for (int vueltas=0; vueltas<12; vueltas++){
-                             lcd.clear();
-                             lcd.print("TOMA COMIDA");
-                             digitalWrite(motorA,HIGH);
-                             digitalWrite(motorB,HIGH);
-                             delay(100);
-                             digitalWrite(motorA,LOW);
-                             digitalWrite(motorC,HIGH);
-                             delay(100);
-                             digitalWrite(motorB,LOW);
-                             digitalWrite(motorD,HIGH);
-                             delay(100);
-                             digitalWrite(motorC,LOW);
-                             digitalWrite(motorA,HIGH);
-                             delay(100);
-                             digitalWrite(motorD,LOW);
-                             digitalWrite(motorA,LOW);}                  
+                           rotate();                
                            }}}}
      lastButtonFourState = readingFour;
 if (flag8==0){
@@ -676,6 +677,17 @@ if (flag8==0){
 // Cuarta etapa: Mostrar hora y alimentar
 if (flag6==1){
   
+       if (readingFour != lastButtonFourState) {
+          lastDebounceTimeFour = millis();}
+       if ((millis() - lastDebounceTimeFour) > debounceDelay) {
+             if (readingFour != buttonFourState) {
+                       buttonFourState = readingFour;
+                       if (buttonFourState == HIGH) {
+                         if (flag1==1){
+                           rotate();                  
+                           }}}}
+     lastButtonFourState = readingFour;
+  
   // Imprimir la hora del Modulo RTC en el Display
   lcd.clear();
   lcd.setCursor(4,0);
@@ -746,23 +758,8 @@ if (flag6==1){
     if(RTC.hour==hora[i]){
       if (RTC.minute==minuto[i]){
         if ((RTC.second==00)){
-          lcd.clear();
-          lcd.print("TOMA COMIDA");*/  
-          for (int vueltas=0; vueltas<12; vueltas++){
-            digitalWrite(motorA,HIGH);
-            digitalWrite(motorB,HIGH);
-            delay(100);
-            digitalWrite(motorA,LOW);
-            digitalWrite(motorC,HIGH);
-            delay(100);
-            digitalWrite(motorB,LOW);
-            digitalWrite(motorD,HIGH);
-            delay(100);
-            digitalWrite(motorC,LOW);
-            digitalWrite(motorA,HIGH);
-            delay(100);
-            digitalWrite(motorD,LOW);
-            digitalWrite(motorA,LOW);}}}}}
+            rotate();
+          }}}}
   delay(1000);  
   
 }}
