@@ -746,9 +746,9 @@ if (flag6==1){
     if(RTC.hour==hora[i]){
       if (RTC.minute==minuto[i]){
         if ((RTC.second==00)){
+          lcd.clear();
+          lcd.print("TOMA COMIDA");*/  
           for (int vueltas=0; vueltas<12; vueltas++){
-            lcd.clear();
-            lcd.print("TOMA COMIDA");
             digitalWrite(motorA,HIGH);
             digitalWrite(motorB,HIGH);
             delay(100);
